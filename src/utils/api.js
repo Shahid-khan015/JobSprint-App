@@ -10,18 +10,30 @@ const headers = {
 
 export const searchJobs = async (query, location = "United States") => {
   try {
+    const searchQuery = location && location.trim() && location !== "United States"
+      ? `${query} in ${location}`
+      : query;
+
+    const params = new URLSearchParams({
+      query: searchQuery,
+      page: "1",
+      num_pages: "1",
+      date_posted: "all",
+      remote_jobs_only: "false"
+    });
+
     const response = await fetch(
-      `${BASE_URL}/search?query=${encodeURIComponent(query)}&page=1&num_pages=1&date_posted=all&remote_jobs_only=false&employment_types=FULLTIME%2CPARTTIME%2CINTERN%2CCONTRACTOR&job_requirements=under_3_years_experience%2Cmore_than_3_years_experience%2Cno_experience%2Cno_degree`,
+      `${BASE_URL}/search?${params.toString()}`,
       {
         method: "GET",
         headers: headers
       }
     );
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error("Error searching jobs:", error);

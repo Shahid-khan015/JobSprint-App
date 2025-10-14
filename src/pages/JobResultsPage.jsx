@@ -73,22 +73,37 @@ export default function JobResultsPage() {
   return (
     <Container className="py-4">
       <Row>
-        <Col lg={8} className="mx-auto">
-          {/* Search Form */}
-          <Card className="mb-4 shadow-sm">
-            <Card.Body>
+        <Col lg={10} xl={9} className="mx-auto">
+          <Card className="mb-4 shadow-sm border-0" style={{ borderRadius: '16px' }}>
+            <Card.Body className="p-4">
               <Form onSubmit={handleNewSearch}>
-                <Row>
-                  <Col md={8}>
+                <Row className="g-3">
+                  <Col md={9}>
                     <Form.Control
                       type="text"
                       placeholder="Search for jobs..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      size="lg"
+                      style={{
+                        borderRadius: '10px',
+                        border: '2px solid #e2e8f0',
+                        padding: '0.75rem 1rem'
+                      }}
                     />
                   </Col>
-                  <Col md={4}>
-                    <Button type="submit" variant="primary" className="w-100">
+                  <Col md={3}>
+                    <Button
+                      type="submit"
+                      className="w-100 h-100"
+                      style={{
+                        background: 'linear-gradient(135deg, #0066cc 0%, #0052a3 100%)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: '600',
+                        boxShadow: '0 2px 8px rgba(0, 102, 204, 0.25)'
+                      }}
+                    >
                       Search
                     </Button>
                   </Col>
@@ -97,11 +112,10 @@ export default function JobResultsPage() {
             </Card.Body>
           </Card>
 
-          {/* Results Header */}
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Search Results</h2>
-            <span className="text-muted">
-              {jobs.length} jobs found for "{query}"
+            <h2 className="fw-bold mb-0" style={{ color: '#1e293b' }}>Search Results</h2>
+            <span style={{ color: '#64748b', fontWeight: '500' }}>
+              {jobs.length} jobs found {query && `for "${query}"`}
             </span>
           </div>
 
@@ -115,66 +129,127 @@ export default function JobResultsPage() {
           )}
 
           {jobs.map((job, index) => (
-            <Card key={job.job_id || index} className="mb-3 shadow-sm">
-              <Card.Body>
+            <Card
+              key={job.job_id || index}
+              className="mb-3 shadow-sm border-0"
+              style={{
+                borderRadius: '16px',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '';
+              }}
+              onClick={() => navigate(`/job/${encodeURIComponent(job.job_id)}`)}
+            >
+              <Card.Body className="p-4">
                 <Row>
-                  <Col md={8}>
-                    <div className="d-flex align-items-start mb-2">
+                  <Col md={9}>
+                    <div className="d-flex align-items-start mb-3">
                       {job.employer_logo && (
-                        <img 
-                          src={job.employer_logo} 
-                          alt={job.employer_name}
-                          className="me-3"
-                          style={{ width: '50px', height: '50px', objectFit: 'contain' }}
-                        />
+                        <div
+                          style={{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '12px',
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: '1rem',
+                            flexShrink: 0
+                          }}
+                        >
+                          <img
+                            src={job.employer_logo}
+                            alt={job.employer_name}
+                            style={{
+                              width: '45px',
+                              height: '45px',
+                              objectFit: 'contain'
+                            }}
+                          />
+                        </div>
                       )}
                       <div className="flex-grow-1">
-                        <h5 className="mb-1">
-                          <Button 
-                            variant="link" 
-                            className="p-0 text-start text-decoration-none"
-                            onClick={() => navigate(`/job/${encodeURIComponent(job.job_id)}`)}
-                          >
-                            {job.job_title}
-                          </Button>
+                        <h5 className="mb-2 fw-bold" style={{ color: '#0066cc' }}>
+                          {job.job_title}
                         </h5>
-                        <h6 className="text-primary mb-1">{job.employer_name}</h6>
-                        <p className="text-muted mb-2">
-                          <i className="fas fa-map-marker-alt me-1"></i>
-                          {job.job_city}, {job.job_state} {job.job_country}
+                        <h6 className="mb-2" style={{ color: '#1e293b', fontWeight: '600' }}>
+                          {job.employer_name}
+                        </h6>
+                        <p className="mb-0" style={{ color: '#64748b', fontSize: '0.95rem' }}>
+                          <i className="fas fa-map-marker-alt me-2"></i>
+                          {job.job_city && job.job_state
+                            ? `${job.job_city}, ${job.job_state}`
+                            : job.job_country}
                         </p>
                       </div>
                     </div>
-                    
-                    <p className="text-muted mb-2">
+
+                    <p style={{ color: '#64748b', marginBottom: '1rem', lineHeight: '1.6' }}>
                       {truncateText(job.job_description)}
                     </p>
-                    
-                    <div className="mb-2">
+
+                    <div className="d-flex flex-wrap gap-2">
                       {job.job_employment_type && (
-                        <Badge bg="secondary" className="me-2">
+                        <Badge
+                          bg="secondary"
+                          style={{
+                            padding: '0.5rem 0.75rem',
+                            borderRadius: '8px',
+                            fontWeight: '500'
+                          }}
+                        >
                           {job.job_employment_type}
                         </Badge>
                       )}
                       {job.job_is_remote && (
-                        <Badge bg="success" className="me-2">
+                        <Badge
+                          bg="success"
+                          style={{
+                            padding: '0.5rem 0.75rem',
+                            borderRadius: '8px',
+                            fontWeight: '500',
+                            background: '#16a34a'
+                          }}
+                        >
                           Remote
                         </Badge>
                       )}
                     </div>
                   </Col>
-                  
-                  <Col md={4} className="text-md-end">
-                    <p className="fw-bold text-success mb-2">
-                      {formatSalary(job)}
-                    </p>
-                    <p className="text-muted small mb-2">
-                      Posted: {new Date(job.job_posted_at_datetime_utc).toLocaleDateString()}
-                    </p>
-                    <Button 
-                      variant="outline-primary" 
+
+                  <Col md={3} className="text-md-end d-flex flex-column align-items-md-end justify-content-between">
+                    <div>
+                      <p className="fw-bold mb-2" style={{ color: '#16a34a', fontSize: '1.1rem' }}>
+                        {formatSalary(job)}
+                      </p>
+                      <p className="small mb-3" style={{ color: '#64748b' }}>
+                        {new Date(job.job_posted_at_datetime_utc).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline-primary"
                       size="sm"
-                      onClick={() => navigate(`/job/${encodeURIComponent(job.job_id)}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/job/${encodeURIComponent(job.job_id)}`);
+                      }}
+                      style={{
+                        borderRadius: '8px',
+                        borderWidth: '2px',
+                        fontWeight: '600',
+                        padding: '0.5rem 1rem',
+                        borderColor: '#0066cc',
+                        color: '#0066cc'
+                      }}
                     >
                       View Details
                     </Button>
